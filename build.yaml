@@ -1,0 +1,4 @@
+functions:
+  - name: build
+    run:
+      - go build -ldflags "-X cmd.EncryptionKey=TESTINGKEYSTRING"
