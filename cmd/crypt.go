@@ -1,12 +1,10 @@
 package cmd
 
 import (
-	"bytes"
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/md5"
 	"crypto/rand"
-	"encoding/gob"
 	"encoding/hex"
 	"io"
 )
@@ -14,43 +12,6 @@ import (
 // Proper key injected at build time
 var EncryptionKey string = "dummy"
 
-func encConfig(sc secretsConfig) ([]byte, error) {
-
-	var buf bytes.Buffer
-	enc := gob.NewEncoder(&buf)
-	e := enc.Encode(sc)
-	if e != nil {
-		return nil, e
-	}
-
-	r, e := encBytes(buf.Bytes(), EncryptionKey)
-	if e != nil {
-		return nil, e
-	}
-
-	return r, nil
-
-}
-
-func decConfig(c []byte) (secretsConfig, error) {
-
-	var sc secretsConfig
-
-	d, e := decBytes(c, EncryptionKey)
-	if e != nil {
-		return sc, e
-	}
-
-	buf := bytes.NewBuffer(d)
-	dec := gob.NewDecoder(buf)
-
-	e = dec.Decode(&sc)
-	if e != nil {
-		return sc, e
-	}
-
-	return sc, nil
-}
 func encBytes(data []byte, key string) ([]byte, error) {
 	block, _ := aes.NewCipher([]byte(createHash(key)))
 	gcm, err := cipher.NewGCM(block)

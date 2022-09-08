@@ -10,7 +10,10 @@ import (
 type secretsConfig struct {
 	VaultAddress string
 	AuthToken    string
+	Project      string
 }
+
+var sc secretsConfig
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -30,12 +33,16 @@ func Execute() {
 
 func init() {
 
+	var e error
+
 	// ensure base minimum config file is available
 	if fileNotExists(getConfigFileName()) {
-		_, e := setConfigDefaults()
+		e = setConfigDefaults()
 		if e != nil {
 			log.Fatalf("No configuration file found and failed to set defaults: %s", e)
 		}
+	} else {
+
 	}
 
 }

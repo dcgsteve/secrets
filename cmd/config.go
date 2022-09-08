@@ -1,10 +1,10 @@
-/*
-Copyright © 2022 NAME HERE <EMAIL ADDRESS>
-*/
 package cmd
 
 import (
+	"bytes"
+	"encoding/gob"
 	"fmt"
+	"os"
 
 	"github.com/spf13/cobra"
 )
@@ -12,28 +12,117 @@ import (
 // configCmd represents the config command
 var configCmd = &cobra.Command{
 	Use:   "config",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("config called")
-	},
+	Short: "Manage local configuration",
+	Long:  "Manages configuration information in the encrypted SECRETS confiruation file ($HOME/.secrets/config)",
 }
 
 func init() {
 	rootCmd.AddCommand(configCmd)
+}
 
-	// Here you will define your flags and configuration settings.
+func getConfigFileName() string {
+	// set path and file names
+	d := fmt.Sprintf("%s/.secrets/", os.Getenv("HOME"))
+	f := "config"
 
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// configCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// create dir if not there already
+	if !fileExists(d) {
+		os.Mkdir(d, 0755)
+	}
 
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// configCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// return full path to file
+	return fmt.Sprintf("%s/%s", d, f)
+
+}
+
+func setConfigDefaults() error {
+
+	// set default values
+	sc.VaultAddress = "http://127.0.0.1:9000"
+	sc.AuthToken = ""
+	sc.Project = ""
+
+	// save
+	e := saveConfig()
+	if e != nil {
+		return e
+	}
+
+	// done
+	return nil
+
+}
+
+func getConfig() error {
+
+	// read in config
+	b, e := os.ReadFile(getConfigFileName())
+	if e != nil {
+		return e
+	}
+
+	// decrypt config
+	sc, e = decConfig(b)
+	if e != nil {
+		return e
+	}
+
+	// done
+	return nil
+
+}
+
+func saveConfig() error {
+	// encrypt
+	b, e := encConfig(sc)
+	if e != nil {
+		return e
+	}
+
+	// write out config
+	os.WriteFile(getConfigFileName(), b, 0600)
+	if e != nil {
+		return e
+	}
+
+	// done
+	return nil
+}
+
+func encConfig(sc secretsConfig) ([]byte, error) {
+
+	var buf bytes.Buffer
+	enc := gob.NewEncoder(&buf)
+	e := enc.Encode(sc)
+	if e != nil {
+		return nil, e
+	}
+
+	r, e := encBytes(buf.Bytes(), EncryptionKey)
+	if e != nil {
+		return nil, e
+	}
+
+	return r, nil
+
+}
+
+func decConfig(c []byte) (secretsConfig, error) {
+
+	var sc secretsConfig
+
+	d, e := decBytes(c, EncryptionKey)
+	if e != nil {
+		return sc, e
+	}
+
+	buf := bytes.NewBuffer(d)
+	dec := gob.NewDecoder(buf)
+
+	e = dec.Decode(&sc)
+	if e != nil {
+		return sc, e
+	}
+
+	return sc, nil
 }
