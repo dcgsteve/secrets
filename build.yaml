@@ -1,4 +1,21 @@
+env:
+  GOOS: linux
+  BUILD: 1.0-${ARTISAN_REF}
+
 functions:
   - name: build
     run:
-      - go build -ldflags "-X cmd.EncryptionKey=TESTINGKEYSTRING"
+      - echo ${BUILD}
+      - go build --ldflags="-X 'github.com/dcgsteve/secrets/cmd.Version=${BUILD}' -X 'github.com/dcgsteve/secrets/cmd.EncryptionKey=dummy'" -o bin/${GOOS}/secrets
+
+  - name: build-linux
+    env:
+      GOOS: linux
+    run:
+      - $(build)
+
+  - name: build-mac
+    env:
+      GOOS: darwin
+    run:
+      - $(build)

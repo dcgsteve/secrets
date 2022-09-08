@@ -3,7 +3,6 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/hashicorp/vault/api"
 	"github.com/spf13/cobra"
 )
 
@@ -33,12 +32,10 @@ func getSecret(cmd *cobra.Command, args []string) {
 		p = sc.Project
 	}
 
-	// init client
-	client, e := api.NewClient(&api.Config{Address: sc.VaultAddress, HttpClient: httpClient})
+	client, e := getClient()
 	if e != nil {
 		stop(fmt.Sprintf("Failed to create Vault client: %s", e))
 	}
-	client.SetToken(sc.AuthToken)
 
 	// get secret map
 	s, _ := client.Logical().Read(fmt.Sprintf("%s/%s/%s", sc.Store, p, args[0]))

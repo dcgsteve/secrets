@@ -3,7 +3,6 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/hashicorp/vault/api"
 	"github.com/spf13/cobra"
 )
 
@@ -36,12 +35,8 @@ func setSecret(cmd *cobra.Command, args []string) {
 		p = sc.Project
 	}
 
-	// init client
-	client, e := api.NewClient(&api.Config{Address: sc.VaultAddress, HttpClient: httpClient})
-	if e != nil {
-		stop(fmt.Sprintf("Failed to create Vault client: %s", e))
-	}
-	client.SetToken(sc.AuthToken)
+	// get client
+	client := cliGetClient()
 
 	// init data
 	d := map[string]interface{}{
@@ -49,7 +44,7 @@ func setSecret(cmd *cobra.Command, args []string) {
 	}
 
 	// write
-	_, e = client.Logical().Write(fmt.Sprintf("%s/%s/%s", sc.Store, p, args[0]), d)
+	_, e := client.Logical().Write(fmt.Sprintf("%s/%s/%s", sc.Store, p, args[0]), d)
 	if e != nil {
 		stop(fmt.Sprintf("Failed to write secret: %s", e))
 	}

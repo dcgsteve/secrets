@@ -90,7 +90,7 @@ func saveConfig() error {
 	return nil
 }
 
-func encConfig(sc secretsConfig) ([]byte, error) {
+func encConfig(sc *secretsConfig) ([]byte, error) {
 
 	var buf bytes.Buffer
 	enc := gob.NewEncoder(&buf)
@@ -108,13 +108,13 @@ func encConfig(sc secretsConfig) ([]byte, error) {
 
 }
 
-func decConfig(c []byte) (secretsConfig, error) {
+func decConfig(c []byte) (*secretsConfig, error) {
 
 	var sc secretsConfig
 
 	d, e := decBytes(c, EncryptionKey)
 	if e != nil {
-		return sc, e
+		return nil, e
 	}
 
 	buf := bytes.NewBuffer(d)
@@ -122,8 +122,8 @@ func decConfig(c []byte) (secretsConfig, error) {
 
 	e = dec.Decode(&sc)
 	if e != nil {
-		return sc, e
+		return nil, e
 	}
 
-	return sc, nil
+	return &sc, nil
 }

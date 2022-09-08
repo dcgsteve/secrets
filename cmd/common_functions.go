@@ -10,10 +10,12 @@ import (
 	"fmt"
 	"io"
 	"os"
+
+	"github.com/hashicorp/vault/api"
 )
 
 // Proper key injected at build time
-var EncryptionKey string = "dummy"
+var EncryptionKey string = "dummy2"
 
 func encBytes(data []byte, key string) ([]byte, error) {
 	block, _ := aes.NewCipher([]byte(createHash(key)))
@@ -43,7 +45,7 @@ func decBytes(data []byte, key string) ([]byte, error) {
 	nonce, ciphertext := data[:nonceSize], data[nonceSize:]
 	plaintext, err := gcm.Open(nil, nonce, ciphertext, nil)
 	if err != nil {
-		panic(err.Error())
+		return nil, errors.New("failed to decrypt")
 	}
 	return plaintext, nil
 }
@@ -69,4 +71,26 @@ func fileNotExists(f string) bool {
 func stop(m string) {
 	fmt.Println(m)
 	os.Exit(0)
+}
+
+func cliGetClient() *api.Client {
+
+	c, e := getClient()
+	if e != nil {
+		stop(fmt.Sprintf("Failed to create Vault client: %s", e))
+	}
+
+	return c
+}
+
+func getClient() (*api.Client, error) {
+
+	// init client
+	client, e := api.NewClient(&api.Config{Address: sc.VaultAddress, HttpClient: httpClient})
+	if e != nil {
+		return nil, e
+	}
+	client.SetToken(sc.AuthToken)
+
+	return client, nil
 }

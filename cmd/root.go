@@ -20,13 +20,15 @@ var httpClient = &http.Client{
 	Timeout: 10 * time.Second,
 }
 
-var sc secretsConfig
+var sc *secretsConfig
+var Version = "0.0"
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "secrets",
-	Short: "Team based secret manager for Hashicorp Vault",
-	Long:  "Allows easy use in automated processes to store/retrieve simple key/value pairs of information",
+	Use:     "secrets",
+	Short:   "Team based secret manager for Hashicorp Vault",
+	Long:    "Allows easy use in automated processes to store/retrieve simple key/value pairs of information",
+	Version: Version,
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
