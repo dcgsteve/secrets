@@ -41,6 +41,7 @@ func setConfigDefaults() error {
 	sc.VaultAddress = "http://127.0.0.1:9000"
 	sc.AuthToken = ""
 	sc.Project = ""
+	sc.Store = ""
 
 	// save
 	e := saveConfig()

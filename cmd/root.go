@@ -2,7 +2,9 @@ package cmd
 
 import (
 	"log"
+	"net/http"
 	"os"
+	"time"
 
 	"github.com/spf13/cobra"
 )
@@ -11,6 +13,11 @@ type secretsConfig struct {
 	VaultAddress string
 	AuthToken    string
 	Project      string
+	Store        string
+}
+
+var httpClient = &http.Client{
+	Timeout: 10 * time.Second,
 }
 
 var sc secretsConfig

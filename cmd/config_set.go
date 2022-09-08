@@ -6,8 +6,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// setCmd represents the set command
-var setCmd = &cobra.Command{
+// configSetCmd represents the set command
+var configSetCmd = &cobra.Command{
 	Use:   "set",
 	Short: "set configuration details",
 	Long: `The configuration is encrypted in a local file - this command allows you to
@@ -16,19 +16,12 @@ set one or more configuration items by using the appropriate flags`,
 }
 
 func init() {
-	configCmd.AddCommand(setCmd)
+	configCmd.AddCommand(configSetCmd)
 
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// setCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	setCmd.Flags().StringP("address", "a", "", "the address of Vault, e.g. http://127.0.0.1:9000")
-	setCmd.Flags().StringP("token", "t", "", "a valid authorised token for Vault")
-	setCmd.Flags().StringP("project", "p", "", "a project name (without spaces)")
+	configSetCmd.Flags().StringP("address", "a", "", "the address of Vault, e.g. http://127.0.0.1:9000")
+	configSetCmd.Flags().StringP("token", "t", "", "a valid authorised token for Vault")
+	configSetCmd.Flags().StringP("project", "p", "", "a project name (without spaces)")
+	configSetCmd.Flags().StringP("store", "s", "", "the Key Value store in Vault to use")
 }
 
 func setConfig(cmd *cobra.Command, args []string) {
@@ -46,6 +39,11 @@ func setConfig(cmd *cobra.Command, args []string) {
 	p, _ := cmd.Flags().GetString("project")
 	if p != "" {
 		sc.Project = p
+	}
+
+	s, _ := cmd.Flags().GetString("store")
+	if s != "" {
+		sc.Store = s
 	}
 
 	e := saveConfig()

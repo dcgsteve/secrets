@@ -6,7 +6,10 @@ import (
 	"crypto/md5"
 	"crypto/rand"
 	"encoding/hex"
+	"errors"
+	"fmt"
 	"io"
+	"os"
 )
 
 // Proper key injected at build time
@@ -49,4 +52,21 @@ func createHash(key string) string {
 	hasher := md5.New()
 	hasher.Write([]byte(key))
 	return hex.EncodeToString(hasher.Sum(nil))
+}
+
+func fileExists(f string) bool {
+	if _, err := os.Stat(f); errors.Is(err, os.ErrNotExist) {
+		return false
+	} else {
+		return true
+	}
+}
+
+func fileNotExists(f string) bool {
+	return !fileExists(f)
+}
+
+func stop(m string) {
+	fmt.Println(m)
+	os.Exit(0)
 }

@@ -23,23 +23,19 @@ Example:
 
 func init() {
 	configCmd.AddCommand(resetCmd)
-	resetCmd.Flags().String("commit", "", "set to YES to allow the reset to run")
+	resetCmd.Flags().Bool("confirm", false, "specify this flag to confirm the reset can run")
 }
 
 func resetConfig(cmd *cobra.Command, args []string) {
 
-	commit, e := cmd.Flags().GetString("commit")
-	if e != nil {
-		log.Fatalf("Invalid commit value: %s", e)
-	}
-
-	if commit == "YES" {
+	confirm, _ := cmd.Flags().GetBool("confirm")
+	if confirm {
 		e := setConfigDefaults()
 		if e != nil {
 			log.Fatalf("Failed to reset default configuration: %s", e)
 		}
 	} else {
-		fmt.Println("Cannot reset configuration as 'commit' flag is not set to YES - no changes have been made")
+		fmt.Println("Cannot reset configuration as 'confirm' flag was not specified - no changes have been made")
 	}
 
 }

@@ -44,5 +44,10 @@ func showConfig(cmd *cobra.Command, args []string) {
 	} else {
 		fmt.Println("Project: not entered")
 	}
+	if sc.Store != "" {
+		fmt.Printf("Store: %s\n", sc.Store)
+	} else {
+		fmt.Println("Store: not entered")
+	}
 
 }
