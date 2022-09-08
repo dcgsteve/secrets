@@ -42,7 +42,10 @@ func init() {
 			log.Fatalf("No configuration file found and failed to set defaults: %s", e)
 		}
 	} else {
-
+		e := getConfig()
+		if e != nil {
+			log.Fatalf("Configuration file found but failed to get information: %s", e)
+		}
 	}
 
 }

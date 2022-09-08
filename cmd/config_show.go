@@ -2,10 +2,13 @@ package cmd
 
 import (
 	"fmt"
-	"log"
+	"strings"
 
 	"github.com/spf13/cobra"
 )
+
+// correct length of Vault token
+const toklen int = 95
 
 // showCmd represents the show command
 var showCmd = &cobra.Command{
@@ -20,15 +23,26 @@ func init() {
 }
 
 func showConfig(cmd *cobra.Command, args []string) {
-	e := getConfig()
-	if e != nil {
-		log.Fatalf("Unable to read configuration details: %s", e)
+	// address
+	fmt.Printf("Vault address: %s\n", sc.VaultAddress)
+
+	// token
+	if sc.AuthToken != "" {
+		l := len(sc.AuthToken)
+		if l == toklen {
+			fmt.Printf("Vault token (redacted): %s%s%s\n", sc.AuthToken[0:6], strings.Repeat("*", l-12), sc.AuthToken[l-6:l])
+		} else {
+			fmt.Printf("Vault token: available but looks the wrong length - should be %d characters long ?)\n", toklen)
+		}
+	} else {
+		fmt.Println("Vault token: not entered")
 	}
 
-	fmt.Printf("Vault address: %s\n", sc.VaultAddress)
-	if sc.AuthToken != "" {
-		fmt.Println("Vault token: set")
+	// other
+	if sc.Project != "" {
+		fmt.Printf("Project: %s\n", sc.Project)
 	} else {
-		fmt.Println("Vault token: not set")
+		fmt.Println("Project: not entered")
 	}
+
 }

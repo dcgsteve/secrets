@@ -28,6 +28,7 @@ func init() {
 	// is called directly, e.g.:
 	setCmd.Flags().StringP("address", "a", "", "the address of Vault, e.g. http://127.0.0.1:9000")
 	setCmd.Flags().StringP("token", "t", "", "a valid authorised token for Vault")
+	setCmd.Flags().StringP("project", "p", "", "a project name (without spaces)")
 }
 
 func setConfig(cmd *cobra.Command, args []string) {
@@ -40,6 +41,11 @@ func setConfig(cmd *cobra.Command, args []string) {
 	t, _ := cmd.Flags().GetString("token")
 	if t != "" {
 		sc.AuthToken = t
+	}
+
+	p, _ := cmd.Flags().GetString("project")
+	if p != "" {
+		sc.Project = p
 	}
 
 	e := saveConfig()
