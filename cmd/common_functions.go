@@ -15,7 +15,7 @@ import (
 )
 
 // Proper key injected at build time
-var EncryptionKey string = "dummy2"
+var EncryptionKey string = "dummy"
 
 func encBytes(data []byte, key string) ([]byte, error) {
 	block, _ := aes.NewCipher([]byte(createHash(key)))

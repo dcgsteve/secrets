@@ -22,8 +22,8 @@ func init() {
 
 func getConfigFileName() string {
 	// set path and file names
-	d := fmt.Sprintf("%s/.secrets/", os.Getenv("HOME"))
-	f := "config"
+	d := fmt.Sprintf("%s/.config/", os.Getenv("HOME"))
+	f := "secrets.conf"
 
 	// create dir if not there already
 	if !fileExists(d) {
