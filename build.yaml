@@ -6,7 +6,7 @@ functions:
   - name: build
     run:
       - echo ${BUILD}
-      - go build --ldflags="-X 'github.com/dcgsteve/secrets/cmd.Version=${BUILD}' -X 'github.com/dcgsteve/secrets/cmd.EncryptionKey=dummy'" -o bin/${GOOS}/secrets
+      - go build --ldflags="-X 'github.com/dcgsteve/secrets/cmd.Version=${BUILD}' -X 'github.com/dcgsteve/secrets/cmd.EncryptionKey=${SECRETS_LIVE_KEY}'" -o bin/${GOOS}/secrets
 
   - name: build-linux
     env:
