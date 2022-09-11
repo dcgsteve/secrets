@@ -14,7 +14,7 @@ import (
 	"syscall"
 
 	"github.com/hashicorp/vault/api"
-	"golang.org/x/crypto/ssh/terminal"
+	"golang.org/x/term"
 )
 
 // Proper key injected at build time
@@ -141,7 +141,7 @@ func getNewToken(c *api.Client) (string, error) {
 
 	// get password from user
 	fmt.Printf("Vault password for user %q (will be hidden): ", u)
-	b, e := terminal.ReadPassword(int(syscall.Stdin))
+	b, e := term.ReadPassword(int(syscall.Stdin))
 	fmt.Println()
 	if e != nil {
 		return "", errors.New("failed to autheticate against Vault with username and password")
