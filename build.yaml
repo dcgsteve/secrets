@@ -1,6 +1,6 @@
 env:
   GOOS: linux
-  BUILD: 1.0-${ARTISAN_REF}
+  BUILD: 0.8.0-beta
 
 functions:
   - name: build
