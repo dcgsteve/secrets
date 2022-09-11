@@ -38,6 +38,9 @@ func getConfigFileName() string {
 func setConfigDefaults() error {
 
 	// set default values
+	if sc == nil {
+		sc = new(secretsConfig)
+	}
 	sc.VaultAddress = "http://127.0.0.1:9000"
 	sc.AuthToken = ""
 	sc.Project = ""
