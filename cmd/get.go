@@ -27,7 +27,7 @@ func getSecret(cmd *cobra.Command, args []string) {
 	}
 
 	// parameter takes precendence over current config
-	p, _ := cmd.Flags().GetString("address")
+	p, _ := cmd.Flags().GetString("project")
 	if p == "" {
 		p = sc.Project
 	}
