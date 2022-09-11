@@ -14,6 +14,7 @@ type secretsConfig struct {
 	AuthToken    string
 	Project      string
 	Store        string
+	Username     string
 }
 
 var httpClient = &http.Client{

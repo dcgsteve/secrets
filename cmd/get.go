@@ -34,7 +34,7 @@ func getSecret(cmd *cobra.Command, args []string) {
 
 	client, e := getClient()
 	if e != nil {
-		stop(fmt.Sprintf("Failed to create Vault client: %s", e))
+		stop("Failed to create Vault client: ", e.Error())
 	}
 
 	// get secret map

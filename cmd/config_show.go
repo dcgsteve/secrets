@@ -23,10 +23,14 @@ func init() {
 }
 
 func showConfig(cmd *cobra.Command, args []string) {
-	// address
-	fmt.Printf("Vault address: %s\n", sc.VaultAddress)
 
-	// token
+	// display
+	printCI("Vault Address", sc.VaultAddress)
+	printCI("Vault Username", sc.Username)
+	printCI("Vault K/V Store", sc.Store)
+	printCI("Current Project", sc.Project)
+
+	// token (redacted)
 	if sc.AuthToken != "" {
 		l := len(sc.AuthToken)
 		if l == toklen {
@@ -38,16 +42,12 @@ func showConfig(cmd *cobra.Command, args []string) {
 		fmt.Println("Vault token: not entered")
 	}
 
-	// other
-	if sc.Project != "" {
-		fmt.Printf("Project: %s\n", sc.Project)
-	} else {
-		fmt.Println("Project: not entered")
-	}
-	if sc.Store != "" {
-		fmt.Printf("Store: %s\n", sc.Store)
-	} else {
-		fmt.Println("Store: not entered")
-	}
+}
 
+func printCI(k, v string) {
+	if v != "" {
+		fmt.Printf("%s: %s\n", k, v)
+	} else {
+		fmt.Printf("%s: not entered\n", k)
+	}
 }

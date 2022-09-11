@@ -46,7 +46,7 @@ func setSecret(cmd *cobra.Command, args []string) {
 	// write
 	_, e := client.Logical().Write(fmt.Sprintf("%s/%s/%s", sc.Store, p, args[0]), d)
 	if e != nil {
-		stop(fmt.Sprintf("Failed to write secret: %s", e))
+		stop("Failed to write secret: ", e.Error())
 	}
 
 }
