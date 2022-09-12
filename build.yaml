@@ -10,32 +10,36 @@ functions:
       - $(build-linux)
       - $(build-mac)
       - $(build-windows)
-      - find -name secrets
-      - gh release create --draft --title=${BUILD} --prelease bin/linux/secrets bin/darwin/secrets bin/windows/secrets
+      - gh release create --generate-notes -t "${BUILD}" ${BUILD} 'bin/secrets' 'bin/secrets-mac' 'bin/secrets.exe'
+
+  - name: prerelease
+    description: build all prereleases for production
+    run:
+      - $(build-linux)
+      - $(build-mac)
+      - $(build-windows)
+      - gh release create --prerelease --generate-notes -t "${BUILD}" ${BUILD} 'bin/secrets' 'bin/secrets-mac' 'bin/secrets.exe'
 
   - name: build-linux
     env:
       GOOS: linux
       GOARCH: amd64
     run:
-      - echo "Building binary bin/${GOOS}/secrets ..."
-      - garble -literals -tiny build --ldflags="-X 'github.com/dcgsteve/secrets/cmd.Version=${BUILD}' -X 'github.com/dcgsteve/secrets/cmd.EncryptionKey=${SECRETS_LIVE_KEY}'" -o bin/${GOOS}/secrets
+      - garble -literals -tiny build --ldflags="-X 'github.com/dcgsteve/secrets/cmd.Version=${BUILD}' -X 'github.com/dcgsteve/secrets/cmd.EncryptionKey=${SECRETS_LIVE_KEY}'" -o bin/secrets
 
   - name: build-mac
     env:
       GOOS: darwin
       GOARCH: amd64
     run:
-      - echo "Building binary bin/${GOOS}/secrets ..."
-      - garble -literals -tiny build --ldflags="-X 'github.com/dcgsteve/secrets/cmd.Version=${BUILD}' -X 'github.com/dcgsteve/secrets/cmd.EncryptionKey=${SECRETS_LIVE_KEY}'" -o bin/${GOOS}/secrets
+      - garble -literals -tiny build --ldflags="-X 'github.com/dcgsteve/secrets/cmd.Version=${BUILD}' -X 'github.com/dcgsteve/secrets/cmd.EncryptionKey=${SECRETS_LIVE_KEY}'" -o bin/secrets-mac
 
   - name: build-windows
     env:
       GOOS: windows
       GOARCH: 386
     run:
-      - echo "Building binary bin/${GOOS}/secrets ..."
-      - garble -literals -tiny build --ldflags="-X 'github.com/dcgsteve/secrets/cmd.Version=${BUILD}' -X 'github.com/dcgsteve/secrets/cmd.EncryptionKey=${SECRETS_LIVE_KEY}'" -o bin/${GOOS}/secrets
+      - garble -literals -tiny build --ldflags="-X 'github.com/dcgsteve/secrets/cmd.Version=${BUILD}' -X 'github.com/dcgsteve/secrets/cmd.EncryptionKey=${SECRETS_LIVE_KEY}'" -o bin/secrets.exe
 
   - name: install-garble
     description: install Garble (used for production releases)
