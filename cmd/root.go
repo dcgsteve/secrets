@@ -53,7 +53,7 @@ func init() {
 	} else {
 		e := getConfig()
 		if e != nil {
-			log.Fatalf("Configuration file found but failed to initialise - likely it was created using a different encryption key: %s", e)
+			log.Fatalf("Configuration file found but failed to initialise!\nLikely it was created using a different encryption key: %s\n\nSuggest deleting the local configuration file, i.e. ~/.config/secrets.conf", e)
 		}
 	}
 

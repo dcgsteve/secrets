@@ -43,6 +43,6 @@ func deleteSecret(cmd *cobra.Command, args []string) {
 		stop(fmt.Sprintf("Could not access Vault correctly! (Store was %q, Project was %q)", sc.Store, sc.Project))
 	}
 
-	fmt.Printf("Secret %q was deleted (if it existed)", args[0])
+	fmt.Printf("Secret %q was deleted (if it existed)\n", args[0])
 
 }

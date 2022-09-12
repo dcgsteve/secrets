@@ -33,14 +33,16 @@ func listSecret(cmd *cobra.Command, args []string) {
 	}
 
 	// get secret map
-	s, _ := client.Logical().List(fmt.Sprintf("%s/%s", sc.Store, p))
-	if s == nil {
-		stop(fmt.Sprintf("Could not check for secrets! (Store was %q, Project was %q)", sc.Store, sc.Project))
+	s, e := client.Logical().List(fmt.Sprintf("%s/%s", sc.Store, p))
+	if e != nil {
+		stop(fmt.Sprintf("Could not check for secrets due to error: %s! (Store was %q, Project was %q)", e.Error(), sc.Store, sc.Project))
 	}
 
-	fmt.Printf("Secrets available to project %q:\n", sc.Project)
-	for _, v := range s.Data["keys"].([]interface{}) {
-		fmt.Println(v)
+	// if we have a result, display list
+	if s != nil {
+		for _, v := range s.Data["keys"].([]interface{}) {
+			fmt.Println(v)
+		}
 	}
 
 }

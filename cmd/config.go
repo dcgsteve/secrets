@@ -46,6 +46,7 @@ func setConfigDefaults() error {
 	sc.Project = ""
 	sc.Store = ""
 	sc.Username = ""
+	sc.Password = ""
 
 	// save
 	e := saveConfig()
