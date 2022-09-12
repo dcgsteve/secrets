@@ -44,18 +44,16 @@ func Execute() {
 
 func init() {
 
-	var e error
-
 	// ensure base minimum config file is available
 	if fileNotExists(getConfigFileName()) {
-		e = setConfigDefaults()
+		e := setConfigDefaults()
 		if e != nil {
 			log.Fatalf("No configuration file found and failed to set defaults: %s", e)
 		}
 	} else {
 		e := getConfig()
 		if e != nil {
-			log.Fatalf("Configuration file found but failed to get information: %s", e)
+			log.Fatalf("Configuration file found but failed to initialise - likely it was created using a different encryption key: %s", e)
 		}
 	}
 
