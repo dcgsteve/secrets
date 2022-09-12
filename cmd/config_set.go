@@ -19,7 +19,6 @@ func init() {
 	configCmd.AddCommand(configSetCmd)
 
 	configSetCmd.Flags().StringP("address", "a", "", "the address of Vault, e.g. http://127.0.0.1:9000")
-	configSetCmd.Flags().StringP("token", "t", "", "a valid authorised token for Vault")
 	configSetCmd.Flags().StringP("project", "p", "", "a project name (without spaces)")
 	configSetCmd.Flags().StringP("store", "s", "", "the Key Value store in Vault to use")
 	configSetCmd.Flags().StringP("username", "u", "", "the Vault username")
@@ -29,34 +28,22 @@ func init() {
 
 func setConfig(cmd *cobra.Command, args []string) {
 
-	a, _ := cmd.Flags().GetString("address")
-	if a != "" {
-		sc.VaultAddress = a
-	}
+	var d string
 
-	t, _ := cmd.Flags().GetString("token")
-	if t != "" {
-		sc.AuthToken = t
+	if d, _ = cmd.Flags().GetString("address"); d != "" {
+		sc.VaultAddress = d
 	}
-
-	p, _ := cmd.Flags().GetString("project")
-	if p != "" {
-		sc.Project = p
+	if d, _ = cmd.Flags().GetString("project"); d != "" {
+		sc.Project = d
 	}
-
-	s, _ := cmd.Flags().GetString("store")
-	if s != "" {
-		sc.Store = s
+	if d, _ = cmd.Flags().GetString("store"); d != "" {
+		sc.Store = d
 	}
-
-	u, _ := cmd.Flags().GetString("username")
-	if u != "" {
-		sc.Username = u
+	if d, _ = cmd.Flags().GetString("username"); d != "" {
+		sc.Username = d
 	}
-
-	w, _ := cmd.Flags().GetString("password")
-	if w != "" {
-		sc.Password = w
+	if d, _ = cmd.Flags().GetString("password"); d != "" {
+		sc.Password = d
 	}
 
 	e := saveConfig()
