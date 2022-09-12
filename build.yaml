@@ -1,22 +1,48 @@
 env:
+  CGO_ENABLED: 0
   GOOS: linux
-  BUILD: 0.8.0-beta
+  BUILD: 0.9-beta
 
 functions:
-  - name: build
+  - name: release
+    description: build all releases for production
     run:
-      - echo ${BUILD}
-      # TODO garble this - check Artisan build
-      - go build --ldflags="-X 'github.com/dcgsteve/secrets/cmd.Version=${BUILD}' -X 'github.com/dcgsteve/secrets/cmd.EncryptionKey=${SECRETS_LIVE_KEY}'" -o bin/${GOOS}/secrets
+      - $(build-linux)
+      - $(build-mac)
+      - $(build-windows)
+      - find -name secrets
+      - gh release create --draft --title=${BUILD} --prelease bin/linux/secrets bin/darwin/secrets bin/windows/secrets
 
   - name: build-linux
     env:
       GOOS: linux
+      GOARCH: amd64
     run:
-      - $(build)
+      - echo "Building binary bin/${GOOS}/secrets ..."
+      - garble -literals -tiny build --ldflags="-X 'github.com/dcgsteve/secrets/cmd.Version=${BUILD}' -X 'github.com/dcgsteve/secrets/cmd.EncryptionKey=${SECRETS_LIVE_KEY}'" -o bin/${GOOS}/secrets
 
   - name: build-mac
     env:
       GOOS: darwin
+      GOARCH: amd64
     run:
-      - $(build)
+      - echo "Building binary bin/${GOOS}/secrets ..."
+      - garble -literals -tiny build --ldflags="-X 'github.com/dcgsteve/secrets/cmd.Version=${BUILD}' -X 'github.com/dcgsteve/secrets/cmd.EncryptionKey=${SECRETS_LIVE_KEY}'" -o bin/${GOOS}/secrets
+
+  - name: build-windows
+    env:
+      GOOS: windows
+      GOARCH: 386
+    run:
+      - echo "Building binary bin/${GOOS}/secrets ..."
+      - garble -literals -tiny build --ldflags="-X 'github.com/dcgsteve/secrets/cmd.Version=${BUILD}' -X 'github.com/dcgsteve/secrets/cmd.EncryptionKey=${SECRETS_LIVE_KEY}'" -o bin/${GOOS}/secrets
+
+  - name: install-garble
+    description: install Garble (used for production releases)
+    run:
+      - go install mvdan.cc/garble@latest
+
+  - name: install-gh
+    description: install GitHub command line (used for production releases)
+    run:
+      - bash -c ./install-gh.sh
