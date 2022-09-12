@@ -23,6 +23,8 @@ func init() {
 	configSetCmd.Flags().StringP("project", "p", "", "a project name (without spaces)")
 	configSetCmd.Flags().StringP("store", "s", "", "the Key Value store in Vault to use")
 	configSetCmd.Flags().StringP("username", "u", "", "the Vault username")
+	configSetCmd.Flags().StringP("password", "w", "", "the Vault password for the username")
+
 }
 
 func setConfig(cmd *cobra.Command, args []string) {
@@ -50,6 +52,11 @@ func setConfig(cmd *cobra.Command, args []string) {
 	u, _ := cmd.Flags().GetString("username")
 	if u != "" {
 		sc.Username = u
+	}
+
+	w, _ := cmd.Flags().GetString("password")
+	if w != "" {
+		sc.Password = w
 	}
 
 	e := saveConfig()

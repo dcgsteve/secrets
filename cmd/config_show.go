@@ -26,7 +26,6 @@ func showConfig(cmd *cobra.Command, args []string) {
 
 	// display
 	printCI("Vault Address", sc.VaultAddress)
-	printCI("Vault Username", sc.Username)
 	printCI("Vault K/V Store", sc.Store)
 	printCI("Current Project", sc.Project)
 
@@ -40,6 +39,14 @@ func showConfig(cmd *cobra.Command, args []string) {
 		}
 	} else {
 		fmt.Println("Vault token: not entered")
+	}
+
+	printCI("Vault Username", sc.Username)
+
+	if sc.Password != "" {
+		fmt.Println("Vault password: entered")
+	} else {
+		fmt.Println("Vault password: not entered")
 	}
 
 }

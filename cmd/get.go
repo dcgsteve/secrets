@@ -38,7 +38,10 @@ func getSecret(cmd *cobra.Command, args []string) {
 	}
 
 	// get secret map
-	s, _ := client.Logical().Read(fmt.Sprintf("%s/%s/%s", sc.Store, p, args[0]))
+	s, e := client.Logical().Read(fmt.Sprintf("%s/%s/%s", sc.Store, p, args[0]))
+	if e != nil {
+		stop(fmt.Sprintf("Could not access Vault correctly! (Store was %q, Project was %q)", sc.Store, sc.Project))
+	}
 	if s == nil {
 		stop(fmt.Sprintf("Could not find secret %q! (Store was %q, Project was %q)", args[0], sc.Store, sc.Project))
 	}
