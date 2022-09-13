@@ -57,7 +57,15 @@
             "request": "launch",
             "mode": "auto",
             "program": "${workspaceFolder}",
-            "args": ["list"]
+            "args": ["list","secrets"]
+        },
+        {
+            "name": "List projects",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}",
+            "args": ["list","projects"]
         },
     ]
 }
