@@ -1,7 +1,7 @@
 env:
   CGO_ENABLED: 0
   GOOS: linux
-  BUILD: 0.9.3-beta
+  BUILD: 0.9.4-beta
   IMG_LINUX: secrets-linux-amd64
   IMG_MAC: secrets-mac-arm64
   IMG_WINDOWS: secrets-win-amd64.exe
