@@ -1,48 +1,59 @@
 env:
   CGO_ENABLED: 0
   GOOS: linux
-  BUILD: 0.9.4-beta
+  BUILD: 0.9
   IMG_LINUX: secrets-linux-amd64
   IMG_MAC: secrets-mac-arm64
+  IMG_MAC_AMD: secrets-mac-amd64
   IMG_WINDOWS: secrets-win-amd64.exe
 
 functions:
+
   - name: release
     description: build all releases for production
     run:
+      - bash -c ./next-version.sh
       - $(build-linux)
       - $(build-mac)
       - $(build-windows)
-      - gh release create --generate-notes -t "${BUILD}" ${BUILD} 'bin/${IMG_LINUX}' 'bin/${IMG_MAC}' 'bin/${IMG_WINDOWS}'
+      - gh release create --generate-notes -t "${BUILD}.$(( cat version ))" ${BUILD}.$(( cat version )) 'bin/${IMG_LINUX}' 'bin/${IMG_MAC}' 'bin/${IMG_WINDOWS}'
 
   - name: prerelease
     description: build all prereleases for production
     run:
+      - bash -c ./next-version.sh
       - $(build-linux)
       - $(build-mac)
       - $(build-windows)
-      - gh release create --prerelease --generate-notes -t "${BUILD}" ${BUILD} 'bin/${IMG_LINUX}' 'bin/${IMG_MAC}' 'bin/${IMG_WINDOWS}'
+      - gh release create --prerelease --generate-notes -t "${BUILD}.$(( cat version ))" ${BUILD}.$(( cat version )) 'bin/${IMG_LINUX}' 'bin/${IMG_MAC}' 'bin/${IMG_WINDOWS}'
 
   - name: build-linux
     env:
       GOOS: linux
       GOARCH: amd64
     run:
-      - garble -literals -tiny build --ldflags="-X 'github.com/dcgsteve/secrets/cmd.Version=${BUILD}' -X 'github.com/dcgsteve/secrets/cmd.EncryptionKey=${SECRETS_LIVE_KEY}'" -o bin/${IMG_LINUX}
+      - garble -literals -tiny build --ldflags="-X 'github.com/dcgsteve/secrets/cmd.Version=${BUILD}.$(( cat version ))' -X 'github.com/dcgsteve/secrets/cmd.EncryptionKey=${SECRETS_LIVE_KEY}'" -o bin/${IMG_LINUX}
 
   - name: build-mac
     env:
       GOOS: darwin
       GOARCH: arm64
     run:
-      - garble -literals -tiny build --ldflags="-X 'github.com/dcgsteve/secrets/cmd.Version=${BUILD}' -X 'github.com/dcgsteve/secrets/cmd.EncryptionKey=${SECRETS_LIVE_KEY}'" -o bin/${IMG_MAC}
+      - garble -literals -tiny build --ldflags="-X 'github.com/dcgsteve/secrets/cmd.Version=${BUILD}.$(( cat version ))' -X 'github.com/dcgsteve/secrets/cmd.EncryptionKey=${SECRETS_LIVE_KEY}'" -o bin/${IMG_MAC}
+
+  - name: build-mac-amd
+    env:
+      GOOS: darwin
+      GOARCH: amd64
+    run:
+      - garble -literals -tiny build --ldflags="-X 'github.com/dcgsteve/secrets/cmd.Version=${BUILD}.$(( cat version ))' -X 'github.com/dcgsteve/secrets/cmd.EncryptionKey=${SECRETS_LIVE_KEY}'" -o bin/${IMG_MAC_AMD}
 
   - name: build-windows
     env:
       GOOS: windows
       GOARCH: amd64
     run:
-      - garble -literals -tiny build --ldflags="-X 'github.com/dcgsteve/secrets/cmd.Version=${BUILD}' -X 'github.com/dcgsteve/secrets/cmd.EncryptionKey=${SECRETS_LIVE_KEY}'" -o bin/${IMG_WINDOWS}
+      - garble -literals -tiny build --ldflags="-X 'github.com/dcgsteve/secrets/cmd.Version=${BUILD}.$(( cat version ))' -X 'github.com/dcgsteve/secrets/cmd.EncryptionKey=${SECRETS_LIVE_KEY}'" -o bin/${IMG_WINDOWS}
 
   - name: install-garble
     description: install Garble (used for production releases)
