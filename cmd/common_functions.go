@@ -9,6 +9,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"net"
 	"os"
 	"syscall"
 
@@ -166,4 +167,52 @@ func getStatusCode(e error) int {
 
 	return e.(*api.ResponseError).StatusCode
 
+}
+
+func getMACAddress() (string, error) {
+	var primaryMAC string
+
+	primaryIP, e := getPrimaryIP()
+	if e != nil {
+		return "", fmt.Errorf("cannot retrieve primary IP: %s", e)
+	}
+
+	// get all network interfaces
+	ifas, err := net.Interfaces()
+	if err != nil {
+		return "", err
+	}
+	// fetch mac addresses from all interfaces
+	for _, ifa := range ifas {
+		addrs, err2 := ifa.Addrs()
+		if err2 != nil {
+			return "", fmt.Errorf("cannot retrieve list of unicast interface addresses for network interface: %s", err2)
+		}
+		// var ip net.IP
+		for _, addr := range addrs {
+			var ip net.IP
+			switch v := addr.(type) {
+			case *net.IPNet:
+				ip = v.IP
+			case *net.IPAddr:
+				ip = v.IP
+			}
+			// process IP address
+			if ip.To4() != nil && ip.To4().String() == primaryIP {
+				primaryMAC = ifa.HardwareAddr.String()
+				break
+			}
+		}
+	}
+	return primaryMAC, nil
+}
+
+func getPrimaryIP() (string, error) {
+	conn, err := net.Dial("udp", "1.2.3.4:80")
+	if err != nil {
+		return "", fmt.Errorf("cannot dial connection to retrieve primary IP address: %s", err)
+	}
+	defer conn.Close()
+	ipAddress := conn.LocalAddr().(*net.UDPAddr)
+	return ipAddress.IP.String(), nil
 }

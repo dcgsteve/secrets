@@ -1,0 +1,29 @@
+package cmd
+
+import (
+	"fmt"
+
+	"github.com/spf13/cobra"
+)
+
+// configCmd represents the config command
+var debugCmd = &cobra.Command{
+	Use:   "debug",
+	Short: "debug",
+	Long:  "debug",
+	Run:   debugInfo,
+}
+
+func init() {
+	rootCmd.AddCommand(debugCmd)
+}
+
+func debugInfo(cmd *cobra.Command, args []string) {
+
+	if m, e := getMACAddress(); e != nil {
+		fmt.Printf("Failed to get MAC! %s", e)
+	} else {
+		fmt.Printf("MAC address: %s", m)
+	}
+
+}
