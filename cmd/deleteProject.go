@@ -25,15 +25,17 @@ func init() {
 
 func deleteProject(cmd *cobra.Command, args []string) {
 
+	checkConfig()
+
 	client, e := getClient()
 	if e != nil {
-		stop("Failed to create Vault client: ", e.Error())
+		stopFatal("Failed to create Vault client: ", e.Error())
 	}
 
 	// forced?
 	f, e := cmd.Flags().GetBool("force")
 	if e != nil {
-		stop("Error retrieving status of forced flag! Stopping :(")
+		stopFatal("Error retrieving status of forced flag! Stopping :(")
 	}
 
 	// confirm?
@@ -50,7 +52,7 @@ func deleteProject(cmd *cobra.Command, args []string) {
 	// retrieve list of keys to delete
 	s, e := client.Logical().List(fmt.Sprintf("%s/%s", sc.Store, args[0]))
 	if e != nil {
-		stop("Could not retrieve list of secrets! Stopping :(")
+		stopFatal("Could not retrieve list of secrets! Stopping :(")
 	}
 	if s != nil {
 		for _, v := range s.Data["keys"].([]interface{}) {

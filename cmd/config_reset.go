@@ -28,6 +28,8 @@ func init() {
 
 func resetConfig(cmd *cobra.Command, args []string) {
 
+	checkConfig()
+
 	confirm, _ := cmd.Flags().GetBool("confirm")
 	if confirm {
 		e := setConfigDefaults()

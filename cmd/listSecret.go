@@ -21,6 +21,8 @@ func init() {
 
 func listSecret(cmd *cobra.Command, args []string) {
 
+	checkConfig()
+
 	// parameter takes precendence over current config
 	p, _ := cmd.Flags().GetString("project")
 	if p == "" {
@@ -29,13 +31,13 @@ func listSecret(cmd *cobra.Command, args []string) {
 
 	client, e := getClient()
 	if e != nil {
-		stop("Failed to create Vault client: ", e.Error())
+		stopFatal("Failed to create Vault client: ", e.Error())
 	}
 
 	// get secret map
 	s, e := client.Logical().List(fmt.Sprintf("%s/%s", sc.Store, p))
 	if e != nil {
-		stop(fmt.Sprintf("Could not check for secrets due to error: %s! (Store was %q, Project was %q)", e.Error(), sc.Store, sc.Project))
+		stopFatal(fmt.Sprintf("Could not check for secrets due to error: %s! (Store was %q, Project was %q)", e.Error(), sc.Store, sc.Project))
 	}
 
 	// if we have a result, display list

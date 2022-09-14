@@ -76,11 +76,16 @@ func stop(m ...string) {
 	os.Exit(0)
 }
 
+func stopFatal(m ...string) {
+	fmt.Println(m)
+	os.Exit(1)
+}
+
 func cliGetClient() *api.Client {
 
 	c, e := getClient()
 	if e != nil {
-		stop("Failed to create Vault client: ", e.Error())
+		stopFatal("Failed to create Vault client: ", e.Error())
 	}
 
 	return c
@@ -215,4 +220,30 @@ func getPrimaryIP() (string, error) {
 	defer conn.Close()
 	ipAddress := conn.LocalAddr().(*net.UDPAddr)
 	return ipAddress.IP.String(), nil
+}
+
+func checkConfig() {
+
+	var ok = true
+
+	if sc.Password == "" {
+		ok = false
+	}
+	if sc.Project == "" {
+		ok = false
+	}
+	if sc.Store == "" {
+		ok = false
+	}
+	if sc.Username == "" {
+		ok = false
+	}
+	if sc.VaultAddress == "" {
+		ok = false
+	}
+
+	if !ok {
+		stop("All configuration details have not yet been entered!")
+	}
+
 }

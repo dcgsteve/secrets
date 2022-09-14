@@ -21,6 +21,8 @@ func init() {
 
 func getSecret(cmd *cobra.Command, args []string) {
 
+	checkConfig()
+
 	// check secret name supplied
 	if len(args) == 0 {
 		stop("The name of the secret to read was not supplied!")
@@ -34,13 +36,13 @@ func getSecret(cmd *cobra.Command, args []string) {
 
 	client, e := getClient()
 	if e != nil {
-		stop("Failed to create Vault client: ", e.Error())
+		stopFatal("Failed to create Vault client: ", e.Error())
 	}
 
 	// get secret map
 	s, e := client.Logical().Read(fmt.Sprintf("%s/%s/%s", sc.Store, p, args[0]))
 	if e != nil {
-		stop(fmt.Sprintf("Could not access Vault correctly! (Store was %q, Project was %q)", sc.Store, sc.Project))
+		stopFatal(fmt.Sprintf("Could not access Vault correctly! (Store was %q, Project was %q)", sc.Store, sc.Project))
 	}
 	if s == nil {
 		stop(fmt.Sprintf("Could not find secret %q! (Store was %q, Project was %q)", args[0], sc.Store, sc.Project))

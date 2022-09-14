@@ -24,6 +24,8 @@ func init() {
 
 func setSecret(cmd *cobra.Command, args []string) {
 
+	checkConfig()
+
 	// check syntax
 	if len(args) != 2 {
 		stop("This command needs two arguments, the first being the name of the secret to write and the second being the value of the secret")
@@ -46,7 +48,7 @@ func setSecret(cmd *cobra.Command, args []string) {
 	// write
 	_, e := client.Logical().Write(fmt.Sprintf("%s/%s/%s", sc.Store, p, args[0]), d)
 	if e != nil {
-		stop("Failed to write secret: ", e.Error())
+		stopFatal("Failed to write secret: ", e.Error())
 	}
 
 }

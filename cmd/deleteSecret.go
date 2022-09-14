@@ -22,6 +22,8 @@ func init() {
 
 func deleteSecret(cmd *cobra.Command, args []string) {
 
+	checkConfig()
+
 	// check secret name supplied
 	if len(args) == 0 {
 		stop("The name of the secret to read was not supplied!")
@@ -35,13 +37,13 @@ func deleteSecret(cmd *cobra.Command, args []string) {
 
 	client, e := getClient()
 	if e != nil {
-		stop("Failed to create Vault client: ", e.Error())
+		stopFatal("Failed to create Vault client: ", e.Error())
 	}
 
 	// trigger delete
 	_, e = client.Logical().Delete(fmt.Sprintf("%s/%s/%s", sc.Store, p, args[0]))
 	if e != nil {
-		stop(fmt.Sprintf("Could not access Vault correctly! (Store was %q, Project was %q)", sc.Store, p))
+		stopFatal(fmt.Sprintf("Could not access Vault correctly! (Store was %q, Project was %q)", sc.Store, p))
 	}
 
 	fmt.Printf("Secret %q was deleted (if it existed)\n", args[0])
