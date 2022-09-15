@@ -28,8 +28,6 @@ func init() {
 
 func setConfig(cmd *cobra.Command, args []string) {
 
-	checkConfig()
-
 	var d string
 	if d, _ = cmd.Flags().GetString("address"); d != "" {
 		sc.VaultAddress = d
