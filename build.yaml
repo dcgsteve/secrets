@@ -15,8 +15,9 @@ functions:
       - bash -c ./next-version.sh
       - $(build-linux)
       - $(build-mac)
+      - $(build-mac-amd)
       - $(build-windows)
-      - gh release create --generate-notes -t "${BUILD}.$(( cat version ))" ${BUILD}.$(( cat version )) 'bin/${IMG_LINUX}' 'bin/${IMG_MAC}' 'bin/${IMG_WINDOWS}'
+      - gh release create --generate-notes -t "${BUILD}.$(( cat version ))" ${BUILD}.$(( cat version )) 'bin/${IMG_LINUX}' 'bin/${IMG_MAC}' 'bin/${IMG_MAC_AMD}' 'bin/${IMG_WINDOWS}'
 
   - name: prerelease
     description: build all prereleases for production
@@ -24,8 +25,9 @@ functions:
       - bash -c ./next-version.sh
       - $(build-linux)
       - $(build-mac)
+      - $(build-mac-amd)
       - $(build-windows)
-      - gh release create --prerelease --generate-notes -t "${BUILD}.$(( cat version ))" ${BUILD}.$(( cat version )) 'bin/${IMG_LINUX}' 'bin/${IMG_MAC}' 'bin/${IMG_WINDOWS}'
+      - gh release create --prerelease --generate-notes -t "${BUILD}.$(( cat version ))" ${BUILD}.$(( cat version )) 'bin/${IMG_LINUX}' 'bin/${IMG_MAC}' 'bin/${IMG_MAC_AMD}' 'bin/${IMG_WINDOWS}'
 
   - name: build-linux
     env:
