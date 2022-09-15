@@ -67,7 +67,7 @@ func getSecret(cmd *cobra.Command, args []string) {
 	if cl >= 0 {
 		s := strings.Split(sc, ":")
 		if len(s) != 2 {
-			stopFatal("Can only use --display-key or --display-value on key:pair secrets!")
+			stopFatal("Can only use --display-key or --display-value on key:value secrets!")
 		} else {
 			fmt.Println(s[cl])
 		}
