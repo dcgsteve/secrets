@@ -19,6 +19,7 @@ For example: secrets set colour yellow
 
 func init() {
 	setCmd.Flags().StringP("project", "p", "", "override the currently configured project name")
+	setCmd.Flags().BoolP("force", "f", false, "allow setting a secret if it already exists")
 	rootCmd.AddCommand(setCmd)
 }
 
@@ -45,8 +46,18 @@ func setSecret(cmd *cobra.Command, args []string) {
 		"value": args[1],
 	}
 
+	// is secret there?
+	f, _ := cmd.Flags().GetBool("force")
+	s, e := client.Logical().Read(fmt.Sprintf("%s/%s/%s", sc.Store, p, args[0]))
+	if e != nil {
+		stopFatal(fmt.Sprintf("Failed to check for secret %q: %s", args[0], e))
+	}
+	if s != nil && !f {
+		stopFatal("Secret exists - cannot overwrite without --force flag")
+	}
+
 	// write
-	_, e := client.Logical().Write(fmt.Sprintf("%s/%s/%s", sc.Store, p, args[0]), d)
+	_, e = client.Logical().Write(fmt.Sprintf("%s/%s/%s", sc.Store, p, args[0]), d)
 	if e != nil {
 		stopFatal("Failed to write secret: ", e.Error())
 	}
