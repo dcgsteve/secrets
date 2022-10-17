@@ -19,16 +19,6 @@ functions:
       - $(build-windows)
       - gh release create --generate-notes -t "${BUILD}.$(( cat version ))" ${BUILD}.$(( cat version )) 'bin/${IMG_LINUX}' 'bin/${IMG_MAC}' 'bin/${IMG_MAC_AMD}' 'bin/${IMG_WINDOWS}'
 
-  - name: prerelease
-    description: build all prereleases for production
-    run:
-      - bash -c ./next-version.sh
-      - $(build-linux)
-      - $(build-mac)
-      - $(build-mac-amd)
-      - $(build-windows)
-      - gh release create --prerelease --generate-notes -t "${BUILD}.$(( cat version ))" ${BUILD}.$(( cat version )) 'bin/${IMG_LINUX}' 'bin/${IMG_MAC}' 'bin/${IMG_MAC_AMD}' 'bin/${IMG_WINDOWS}'
-
   - name: build-linux
     env:
       GOOS: linux
@@ -63,6 +53,6 @@ functions:
       - go install mvdan.cc/garble@latest
 
   - name: install-gh
-    description: install GitHub command line (used for production releases)
+    description: Install GitHub command line
     run:
       - bash -c ./install-gh.sh
