@@ -104,8 +104,7 @@ func encConfig(sc *secretsConfig) ([]byte, error) {
 		return nil, e
 	}
 
-	mac, _ := getMACAddress()
-	r, e := encBytes(buf.Bytes(), EncryptionKey+mac)
+	r, e := encBytes(buf.Bytes(), EncryptionKey)
 	if e != nil {
 		return nil, e
 	}
@@ -118,8 +117,7 @@ func decConfig(c []byte) (*secretsConfig, error) {
 
 	var sc secretsConfig
 
-	mac, _ := getMACAddress()
-	d, e := decBytes(c, EncryptionKey+mac)
+	d, e := decBytes(c, EncryptionKey)
 	if e != nil {
 		return nil, e
 	}
