@@ -2,6 +2,7 @@ env:
   CGO_ENABLED: 0
   GOOS: linux
   BUILD: 0.9
+  IMG_LINUX_ARM: secrets-linux-arm64
   IMG_LINUX: secrets-linux-amd64
   IMG_MAC: secrets-mac-arm64
   IMG_MAC_AMD: secrets-mac-amd64
@@ -13,11 +14,12 @@ functions:
     description: build all releases for production
     run:
       - bash -c ./next-version.sh
+      - $(build-linux-arm)
       - $(build-linux)
       - $(build-mac)
       - $(build-mac-amd)
       - $(build-windows)
-      - gh release create --generate-notes -t "${BUILD}.$(( cat version ))" ${BUILD}.$(( cat version )) 'bin/${IMG_LINUX}' 'bin/${IMG_MAC}' 'bin/${IMG_MAC_AMD}' 'bin/${IMG_WINDOWS}'
+      - gh release create --generate-notes -t "${BUILD}.$(( cat version ))" ${BUILD}.$(( cat version )) 'bin/${IMG_LINUX}' 'bin/${IMG_LINUX_ARM}' 'bin/${IMG_MAC}' 'bin/${IMG_MAC_AMD}' 'bin/${IMG_WINDOWS}'
 
   - name: build-linux
     env:
@@ -25,6 +27,13 @@ functions:
       GOARCH: amd64
     run:
       - garble -literals -tiny build --ldflags="-X 'github.com/dcgsteve/secrets/cmd.Version=${BUILD}.$(( cat version ))' -X 'github.com/dcgsteve/secrets/cmd.EncryptionKey=${SECRETS_LIVE_KEY}'" -o bin/${IMG_LINUX}
+
+  - name: build-linux-arm
+    env:
+      GOOS: linux
+      GOARCH: arm64
+    run:
+      - garble -literals -tiny build --ldflags="-X 'github.com/dcgsteve/secrets/cmd.Version=${BUILD}.$(( cat version ))' -X 'github.com/dcgsteve/secrets/cmd.EncryptionKey=${SECRETS_LIVE_KEY}'" -o bin/${IMG_LINUX_ARM}
 
   - name: build-mac
     env:
